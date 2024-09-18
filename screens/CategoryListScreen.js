@@ -29,6 +29,7 @@ export default function CategoryListScreen() {
       renderItem={renderGridItem}
       numColumns={2}
     />
+
   );
 }
 

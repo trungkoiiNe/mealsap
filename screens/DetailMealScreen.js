@@ -1,41 +1,51 @@
-import React, { useLayoutEffect } from 'react';
-import { ScrollView, View, Text, StyleSheet, Image } from 'react-native';
-import { useRoute, useNavigation } from '@react-navigation/native';
-import { MEALS } from '../data/dummy-data';
-import Item from '../components/Item';
-import useStore from '../store';
+import React, { useLayoutEffect, useCallback } from "react";
+import { ScrollView, View, Text, StyleSheet, Image } from "react-native";
+import {
+  useRoute,
+  useNavigation,
+  useFocusEffect,
+} from "@react-navigation/native";
+import { MEALS } from "../data/dummy-data";
+import Item from "../components/Item";
+import useStore from "../store";
 
 export default function DetailMealScreen() {
   const route = useRoute();
   const navigation = useNavigation();
   const { mealId } = route.params;
-  const toggleFavorite = () => {
+
+  const addFavorite = useStore((state) => state.addFavorite);
+  const removeFavorite = useStore((state) => state.removeFavorite);
+  const getUserFavorites = useStore((state) => state.getUserFavorites);
+  const favorites = getUserFavorites();
+  const isFavorite = favorites.some((meal) => meal.id === mealId);
+  const selectedMeal = MEALS.find((meal) => meal.id === mealId);
+  const isStarFilled = useStore((state) => state.isStarFilled);
+  const toggleStarIcon = useStore((state) => state.toggleStarIcon);
+
+  const toggleFavorite = useCallback(() => {
+    toggleStarIcon();
+    // toast show
+
     if (isFavorite) {
-      removeFavorite(meal.id);
+      removeFavorite(mealId);
     } else {
       addFavorite(selectedMeal);
     }
-  };
-  const addFavorite = useStore((state) => state.addFavorite);
-  const removeFavorite = useStore((state) => state.removeFavorite);
-  const isFavorite = useStore((state) => state.favorites.find((meal) => meal.id === mealId));
-  const favorites= useStore((state) => state.favorites);
-  const selectedMeal = MEALS.find((meal) => meal.id === mealId);
+  }, [isFavorite, mealId, selectedMeal, addFavorite, removeFavorite,toggleStarIcon]);
 
   useLayoutEffect(() => {
     navigation.setOptions({
       headerTitle: selectedMeal.title,
       headerRight: () => (
         <Item
-          iconName={isFavorite ? "star" : "star-outline"}
-          color={isFavorite ? "yellow" : "#fff"}
+          iconName={isStarFilled ? "star" : "star-outline"}
+          color={isStarFilled ? "yellow" : "#fff"}
           onPress={toggleFavorite}
         />
       ),
     });
-  }, [navigation, selectedMeal, isFavorite]);
-
-
+  }, [navigation, selectedMeal.title, isFavorite, toggleFavorite]);
   return (
     <ScrollView>
       <Image source={{ uri: selectedMeal.imageUrl }} style={styles.image} />
@@ -62,24 +72,24 @@ export default function DetailMealScreen() {
 
 const styles = StyleSheet.create({
   image: {
-    width: '100%',
+    width: "100%",
     height: 200,
   },
   details: {
-    flexDirection: 'row',
+    flexDirection: "row",
     padding: 15,
-    justifyContent: 'space-around',
+    justifyContent: "space-around",
   },
   title: {
-    fontFamily: 'open-sans-bold',
+    fontFamily: "open-sans-bold",
     fontSize: 22,
-    textAlign: 'center',
+    textAlign: "center",
     margin: 10,
   },
   listItem: {
     marginVertical: 5,
     marginHorizontal: 20,
-    borderColor: '#ccc',
+    borderColor: "#ccc",
     borderWidth: 1,
     padding: 10,
   },

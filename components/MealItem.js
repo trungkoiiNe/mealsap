@@ -34,6 +34,8 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     overflow: 'hidden',
     marginVertical: 10,
+    borderBottomWidth: 1,  // Add this line
+    borderBottomColor: '#ccc',  // Add this line
   },
   bgImage: {
     width: '100%',
@@ -63,6 +65,7 @@ const styles = StyleSheet.create({
     color: 'white',
     textAlign: 'center',
   },
+
 });
 
 export default MealItem;

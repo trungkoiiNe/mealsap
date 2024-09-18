@@ -15,20 +15,22 @@ export default function MealDetailScreen() {
     meal => meal.categoryIds.indexOf(categoryId) >= 0
   );
 
-  useLayoutEffect(() => {
-    navigation.setOptions({
-      headerRight: () => (
-        <Item
-          iconName="star"
-          color="#fff"
-          onPress={() => {
-            console.log('Mark as favorite!');
-          }}
-        />
-      ),
-    });
-  }, [navigation]);
-
+  // useLayoutEffect(() => {
+  //   navigation.setOptions({
+  //     headerRight: () => (
+  //       <Item
+  //         iconName="star"
+  //         color="#fff"
+  //         onPress={() => {
+  //           console.log('Mark as favorite!');
+  //         }}
+  //       />
+  //     ),
+  //   });
+  // }, [navigation]);
+  const renderSeparator = () => (
+    <View style={styles.separator} />
+  );
   const renderMealItem = (itemData) => {
     return (
       <MealItem
@@ -52,6 +54,7 @@ export default function MealDetailScreen() {
         data={displayedMeals}
         renderItem={renderMealItem}
         style={{ width: '100%' }}
+        ItemSeparatorComponent={renderSeparator}  // Add this line
       />
     </View>
   );
@@ -62,5 +65,10 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  separator: {
+    height: 1,
+    width: '100%',
+    backgroundColor: '#ccc',
   },
 });

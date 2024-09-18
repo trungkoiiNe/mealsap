@@ -6,9 +6,12 @@ import { createStackNavigator } from "@react-navigation/stack";
 import { Ionicons } from "@expo/vector-icons";
 
 import CategoryListScreen from "./screens/CategoryListScreen";
-import MealDetailScreen from "./screens/MealDetailScreen";
+import MealDetailScreen from "./screens/CategoryScreen";
 import DetailMealScreen from "./screens/DetailMealScreen";
 import FavoritesScreen from "./screens/FavoritesScreen";
+import LoginScreen from "./screens/LoginScreen";
+import RegisterScreen from "./screens/RegisterScreen";
+import useStore from "./store";
 import { useFonts } from "expo-font";
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -46,7 +49,37 @@ function MealsNavigator() {
     </Stack.Navigator>
   );
 }
-
+function LoginNavigator() {
+  return (
+    <Stack.Navigator
+      screenOptions={{
+        headerStyle: {
+          backgroundColor: "#f4511e",
+        },
+        headerTintColor: "#fff",
+        headerTitleStyle: {
+          fontWeight: "bold",
+        },
+      }}
+    >
+      <Stack.Screen
+        name="Login"
+        component={LoginScreen}
+        options={{ title: "Login" }}
+      />
+      <Stack.Screen
+        name="Register"
+        component={RegisterScreen}
+        options={{ title: "Register" }}
+      />
+      <Stack.Screen
+        name="Categories"
+        component={CategoryListScreen}
+        options={{ title: "Meal Categories" }}
+      />
+    </Stack.Navigator>
+  );
+}
 function FavoritesNavigator() {
   return (
     <Stack.Navigator
@@ -82,9 +115,9 @@ function TabNavigator() {
         tabBarIcon: ({ focused, color, size }) => {
           let iconName;
 
-          if (route.name === "Meals") {
+          if (route.name === "MealsTab") {
             iconName = focused ? "restaurant" : "restaurant-outline";
-          } else if (route.name === "Favorites") {
+          } else if (route.name === "FavoritesTab") {
             iconName = focused ? "star" : "star-outline";
           }
 
@@ -114,6 +147,8 @@ function TabNavigator() {
   );
 }
 export default function App() {
+  const user = useStore((state) => state.user);
+
   const [fontsLoaded] = useFonts({
     "open-sans-bold": require("./assets/fonts/OpenSans-Bold.ttf"),
   });
@@ -123,13 +158,22 @@ export default function App() {
   }
   return (
     <NavigationContainer>
-      <Drawer.Navigator initialRouteName="MealsTab">
-        <Drawer.Screen
-          name="MealsTab"
-          component={TabNavigator}
-          options={{ title: "Meals" }}
-        />
-        <Drawer.Screen name="Favorites" component={FavoritesNavigator} />
+      <Drawer.Navigator initialRouteName={user ? "Home" : "Login"}>
+        {user ? (
+          <>
+            <Drawer.Screen
+              name="Meals"
+              component={TabNavigator}
+              options={{ title: "Meals" }}
+            />
+            <Drawer.Screen name="Favorites" component={FavoritesNavigator} />
+          </>
+        ) : (
+          <>
+            <Drawer.Screen name="LoginScreen" component={LoginNavigator} />
+            <Drawer.Screen name="RegisterScreen" component={RegisterScreen} />
+          </>
+        )}
       </Drawer.Navigator>
     </NavigationContainer>
   );
